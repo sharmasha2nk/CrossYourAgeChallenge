@@ -33,19 +33,32 @@ class GameData {
     constructor() {
         this.amountOfBox = 1;
         this.resetData();
-        var d = new Date();
-        this.time = d.getTime();
+        this.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", 10);
+        if (this.maxAge === null) {
+            this.maxAge = 10;
+        }
+        while (this.maxAge <= 4) {
+            this.maxAge = prompt("Sorry! This challenge is not for kids! Try again in case you got older in last few minutes 😅 or come back later!", this.maxAge);
+            if (this.maxAge === null) {
+                this.maxAge = 10;
+            }
+        }
     }
     resetData() {
         var isTouchDevice = 'ontouchstart' in document.documentElement;
-        var scaleScore = 45000;
-        if(isTouchDevice) {
-            scaleScore = 15000;
+        var scaleScore = 10000;
+        if (isTouchDevice) {
+            scaleScore = 7000;
         }
+
         this.currentNumber = 1;
-        this.score = scaleScore * this.amountOfBox;
+        this.score = scaleScore * this.amountOfBox * this.amountOfBox;
         var d = new Date();
         this.time = d.getTime();
+        gtag('event', 'reset', {
+            'maxAge': this.maxAge,
+            'amountOfBox': this.amountOfBox
+        });
     }
     nextNumber() {
         if (this.currentNumber == 1) {
@@ -59,7 +72,17 @@ class GameData {
         return (number === this.currentNumber);
     }
     isGameWin() {
+        gtag('event', 'level', {
+            'maxAge': this.maxAge,
+            'amountOfBox': this.amountOfBox
+        });
         return (this.currentNumber > this.amountOfBox);
+    }
+    isGameEnd() {
+        gtag('event', 'win', {
+            'maxAge': this.maxAge
+        });
+        return (this.currentNumber > this.maxAge);
     }
 }
 
@@ -99,9 +122,9 @@ class Game {
         createjs.Ticker.on("tick", this.timerstage);
 
 
-        this.text = new createjs.Text("Do it in : " + this.gameData.score, "20px Arial", "#ff7700");
-        this.text.x = 70;
-        this.text.y = 20;
+        this.text = new createjs.Text("Ticker: " + this.gameData.score, "14px Oswald", "#ffffff");
+        this.text.x = 10;
+        this.text.y = 15;
         this.text.textBaseline = "alphabetic";
         this.timerstage.addChild(this.text);
 
@@ -114,7 +137,7 @@ class Game {
         if (!createjs.Ticker.getPaused()) {
             var d = new Date();
             game.gameData.score = game.gameData.score - d.getTime() + game.gameData.time;
-            game.text.text = "Do it in : " + game.gameData.score;
+            game.text.text = "Ticker: " + game.gameData.score;
             game.timerstage.update();
             if (game.gameData.score < 1) {
                 game.gameOver(game);
@@ -136,7 +159,7 @@ class Game {
         this.stage.removeAllChildren();
         this.stage.addChild(new lib.Background());
 
-        this.text.text = "Do it in : " + this.gameData.score;
+        this.text.text = "Ticker: " + this.gameData.score;
         createjs.Ticker.setPaused(false);
 
         this.generateMultipleBoxes(this.gameData.amountOfBox);
@@ -159,11 +182,54 @@ class Game {
 
             // is game over?
             if (this.gameData.isGameWin()) {
-                this.gameOverWin(this);
+                if (this.gameData.isGameEnd()) {
+                    this.gameOverEnd(this);
+                } else {
+                    this.gameOverWin(this);
+                }
             }
             random_bg_color();
         }
     }
+
+    gameOverEnd(v) {
+        v.stage.removeAllChildren();
+        v.gameData.amountOfBox = 1;
+        createjs.Sound.play("Game Over");
+        createjs.Ticker.setPaused(true);
+        v.text.text = "";
+        var gameOverView = new lib.GameOverView();
+        v.stage.addChild(gameOverView);
+        var shape = new createjs.Shape();
+        shape.graphics.beginFill("#343638").drawRect(0, 0, 300, 200);
+        v.stage.addChild(shape);
+        var text = new createjs.Text("Congrats you did it! You beat your age of " + v.gameData.maxAge + ". Challenge your friends now!", "28px Oswald", "#ff7700");
+        //document.getElementById("social-share").setAttribute("data-title", "I just beat the #CrossYourAgeChallenge. I nominate you for the challenge.");
+        text.x = v.stage.width / 2;
+        text.y = 100;
+        text.lineWidth = 200;
+        text.textAlign = "center";
+        text.textBaseline = "alphabetic";
+        v.stage.addChild(text);
+        gameOverView.restartButton.shape.text = "Play Again";
+        var timeout = setTimeout(overlay, 3000);
+        gameOverView.restartButton.on('click', (function() {
+            clearTimeout(timeout);
+            createjs.Sound.play("Jump");
+            v.gameData.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", v.gameData.maxAge);
+            if (v.gameData.maxAge === null) {
+                v.gameData.maxAge = 10;
+            }
+            while (v.gameData.maxAge <= 4) {
+                v.gameData.maxAge = prompt("Sorry! This challenge is not for kids! Try again in case you got older in last few minutes 😅 or come back later!", v.gameData.maxAge);
+                if (v.gameData.maxAge === null) {
+                    v.gameData.maxAge = 10;
+                }
+            }
+            v.restartGame();
+        }).bind(v));
+    }
+
 
     gameOverWin(v) {
         v.stage.removeAllChildren();
@@ -173,8 +239,27 @@ class Game {
         v.text.text = "";
         var gameOverView = new lib.GameOverView();
         v.stage.addChild(gameOverView);
-
+        var shape = new createjs.Shape();
+        shape.graphics.beginFill("#343638").drawRect(0, 0, 300, 200);
+        v.stage.addChild(shape);
+        var text = new createjs.Text(messages[Math.floor((Math.random() * messages.length))], "28px Oswald", "#ff7700");
+        text.x = v.stage.width / 2;
+        text.y = 100;
+        text.lineWidth = 200;
+        text.textAlign = "center";
+        text.textBaseline = "alphabetic";
+        v.stage.addChild(text);
+        var text1 = new createjs.Text((v.gameData.amountOfBox-1) + ((v.gameData.amountOfBox-1) ==1 ? " year": " years") + " old.", "20px Oswald", "#ff7700");
+        text1.x = v.stage.width / 2;
+        text1.y = 40;
+        text1.lineWidth = 200;
+        text1.textAlign = "center";
+        text1.textBaseline = "alphabetic";
+        v.stage.addChild(text1);
+        gameOverView.restartButton.shape.text = "Next Year";
+        var timeout = setTimeout(overlay, 5000);
         gameOverView.restartButton.on('click', (function() {
+            clearTimeout(timeout);
             createjs.Sound.play("Jump");
 
             v.restartGame();
@@ -188,15 +273,26 @@ class Game {
         var gameOverView = new lib.GameOverView();
         v.stage.addChild(gameOverView);
         var shape = new createjs.Shape();
-        shape.graphics.beginFill("#000000").drawRect(0, 0, 300, 200);
+        shape.graphics.beginFill("#343638").drawRect(0, 0, 300, 200);
         v.stage.addChild(shape);
-        var text = new createjs.Text("You lose!", "28px Oswald", "#ff7700");
-        text.x = 110;
+        var text = new createjs.Text(lostmessages[Math.floor((Math.random() * lostmessages.length))], "28px Oswald", "#ff7700");
+        text.x = v.stage.width / 2;
         text.y = 100;
+        text.lineWidth = 200;
+        text.textAlign = "center";
         text.textBaseline = "alphabetic";
         v.stage.addChild(text);
-
+        var text1 = new createjs.Text((v.gameData.amountOfBox-1) + ((v.gameData.amountOfBox-1) ==1 ? " year": " years") + " old.", "20px Oswald", "#ff7700");
+        text1.x = v.stage.width / 2;
+        text1.y = 40;
+        text1.lineWidth = 200;
+        text1.textAlign = "center";
+        text1.textBaseline = "alphabetic";
+        v.stage.addChild(text1);
+        gameOverView.restartButton.shape.text = "Try Again";
+        var timeout = setTimeout(overlay, 5000);
         gameOverView.restartButton.on('click', (function() {
+            clearTimeout(timeout);
             createjs.Sound.play("Jump");
 
             v.restartGame();
@@ -237,14 +333,52 @@ class Game {
 // start the game
 var game = new Game();
 
+var messages = ["That was easy!",
+    "Eassyyyyy 🙄",
+    "Way to go! 👍🏻",
+    "Victory ✌️",
+    "You are the champion",
+    "You can do it",
+    "Bravo!!",
+    "Ah Ha a good old number game",
+    "Never grow up",
+    "At full steam! 👍🏻",
+    "All the way 💪",
+    "You doing great"
+];
+var lostmessages = ["You lose!",
+    "Opsi!",
+    "Faster Faster",
+    "Never Give Up",
+    "Not So Easy",
+    "Too hard hah!",
+    "You can do it",
+    "Click all if you can",
+    "1 2 3 4... easy lah",
+    "You are still playing!",
+    "Dog eat dog",
+    "Ah Ha looks like you forgot the counting",
+    "emm too old for game",
+    "last ditch",
+    "The harder the battle the sweeter the victory…",
+    "We never lost a game we just ran out of time.",
+    "🐣 🐣 🐣"
+];
+
 function random_bg_color() {
     var x = Math.floor(Math.random() * 256);
     var y = Math.floor(Math.random() * 256);
     var z = Math.floor(Math.random() * 256);
     var bgColor = "rgb(" + x + "," + y + "," + z + ")";
-    console.log(bgColor);
-
     document.body.style.background = bgColor;
+}
+
+function overlay() {
+    el = document.getElementById("overlay");
+    el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+    gtag('event', 'overlay', {
+        'visibility': el.style.visibility
+    });
 }
 
 random_bg_color();

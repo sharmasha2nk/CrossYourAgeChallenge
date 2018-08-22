@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles/game.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5b7cf12f86d36a0011c149b1&product=social-ab' async='async'></script>
 </head>
 
 <body>
@@ -20,22 +21,23 @@
             </canvas>
         </p>
         <p align="center">
-            <canvas id="timer-canvas" width="300" height="40" align="right">
+            <canvas id="timer-canvas" width="300" height="20" align="right">
                 This is an interactive game.
             </canvas>
         </p>
+        <div class="sharethis-inline-share-buttons" data-title="I just did #CrossYourAgeChallenge. Let's see if you can beat that too!" data-message="I just did #CrossYourAgeChallenge. Let's see if you can beat that too!" data-description="I just did #CrossYourAgeChallenge. Let's see if you can beat that too!" id="social-share"></div>
     </div>
-    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
-    <script src="scripts/count-game-graphics.js"></script>
-    <script src="scripts/game-es6.js"></script>
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-    (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-5520249068144054",
-        enable_page_level_ads: true
-    });
-    </script>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <div id="overlay" onclick="overlay()">
+        <p>
+            <div class="col-xs-12 col-md-7  header-text">
+                <h2 style="color:#fdab13">Stand With Kerala <p><small class="">Flood Relief</small><p> </h2>
+                <p align="justify" class="text-white">Congrats you beat (or about to beat) the #CrossYourAgeChallenge. But people in Kerala are beaten by the flood. Some of them lost their life even before reaching your age. Kerala is in the midst of an unprecedented flood havoc. The calamity has caused immeasurable misery and devastation. Many lives were lost. Hundreds of homes were totally destroyed and many more were damaged. For the first time in history, 27 dams in the State had to be opened. Never before had the State witnessed a calamity of this scale. In the fight against the flood, we have braved the odds.
+                    <br>
+                    <br> Now it is our duty to help the affected rebuild their lives. The path to recovery can be long &amp; arduous, but you can make a difference by joining the rebuilding efforts. Contribute generously to the Chief Minister's Distress Relief Fund.</p>
+                <a href="https://donation.cmdrf.kerala.gov.in/" target="_blank" class="button white">Donate</a> <small>(Will redirect to Kerala Gov Website)</small>
+            </div>
+        </p>
+    </div>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124438175-1"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -47,6 +49,17 @@
 
     gtag('config', 'UA-124438175-1');
     </script>
+    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+    <script src="scripts/count-game-graphics.js"></script>
+    <script src="scripts/game-es6.js"></script>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-5520249068144054",
+        enable_page_level_ads: true
+    });
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
 </body>
 
 </html>
