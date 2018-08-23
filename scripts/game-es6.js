@@ -33,14 +33,14 @@ class GameData {
     constructor() {
         this.amountOfBox = 1;
         this.resetData();
-        this.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", 10);
+        this.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", 100);
         if (this.maxAge === null) {
-            this.maxAge = 10;
+            this.maxAge = 100;
         }
         while (this.maxAge <= 4) {
             this.maxAge = prompt("Sorry! This challenge is not for kids! Try again in case you got older in last few minutes 😅 or come back later!", this.maxAge);
             if (this.maxAge === null) {
-                this.maxAge = 10;
+                this.maxAge = 100;
             }
         }
     }
@@ -48,7 +48,7 @@ class GameData {
         var isTouchDevice = 'ontouchstart' in document.documentElement;
         var scaleScore = 10000;
         if (isTouchDevice) {
-            scaleScore = 7000;
+            scaleScore = 6000;
         }
 
         this.currentNumber = 1;
@@ -218,12 +218,12 @@ class Game {
             createjs.Sound.play("Jump");
             v.gameData.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", v.gameData.maxAge);
             if (v.gameData.maxAge === null) {
-                v.gameData.maxAge = 10;
+                v.gameData.maxAge = 100;
             }
             while (v.gameData.maxAge <= 4) {
                 v.gameData.maxAge = prompt("Sorry! This challenge is not for kids! Try again in case you got older in last few minutes 😅 or come back later!", v.gameData.maxAge);
                 if (v.gameData.maxAge === null) {
-                    v.gameData.maxAge = 10;
+                    v.gameData.maxAge = 100;
                 }
             }
             v.restartGame();
