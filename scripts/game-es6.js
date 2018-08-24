@@ -56,8 +56,7 @@ class GameData {
         var d = new Date();
         this.time = d.getTime();
         gtag('event', 'reset', {
-            'maxAge': this.maxAge,
-            'amountOfBox': this.amountOfBox
+            'value': this.maxAge,
         });
     }
     nextNumber() {
@@ -73,14 +72,15 @@ class GameData {
     }
     isGameWin() {
         gtag('event', 'level', {
-            'maxAge': this.maxAge,
-            'amountOfBox': this.amountOfBox
+            'event_label': 'Level Won',
+            'value': this.amountOfBox
         });
         return (this.currentNumber > this.amountOfBox);
     }
     isGameEnd() {
         gtag('event', 'win', {
-            'maxAge': this.maxAge
+            'event_label': 'Challenge Won',
+            'value': this.maxAge
         });
         return (this.currentNumber > this.maxAge);
     }
@@ -203,7 +203,6 @@ class Game {
 
     gameOverEnd(v) {
         v.stage.removeAllChildren();
-        v.gameData.amountOfBox = 1;
         createjs.Sound.play("Game Over");
         createjs.Ticker.setPaused(true);
         v.text.text = "";
@@ -224,6 +223,7 @@ class Game {
         var timeout = setTimeout(overlay, 3000);
         gameOverView.restartButton.on('click', (function() {
             clearTimeout(timeout);
+            v.gameData.amountOfBox = 1;
             createjs.Sound.play("Jump");
             v.gameData.maxAge = prompt("Let's see if you can beat the #CrossYourAgeChallenge. May I know your age?", v.gameData.maxAge);
             if (v.gameData.maxAge === null) {
@@ -242,7 +242,6 @@ class Game {
 
     gameOverWin(v) {
         v.stage.removeAllChildren();
-        v.gameData.amountOfBox += 1;
         createjs.Sound.play("Game Over");
         createjs.Ticker.setPaused(true);
         v.text.text = "";
@@ -258,7 +257,7 @@ class Game {
         text.textAlign = "center";
         text.textBaseline = "alphabetic";
         v.stage.addChild(text);
-        var text1 = new createjs.Text((v.gameData.amountOfBox - 1) + ((v.gameData.amountOfBox - 1) == 1 ? " year" : " years") + " old.", "20px Oswald", "#ff7700");
+        var text1 = new createjs.Text((v.gameData.amountOfBox) + ((v.gameData.amountOfBox) == 1 ? " year" : " years") + " old.", "20px Oswald", "#ff7700");
         text1.x = v.stage.width / 2;
         text1.y = 40;
         text1.lineWidth = 200;
@@ -269,6 +268,7 @@ class Game {
         var timeout = setTimeout(overlay, 5000);
         gameOverView.restartButton.on('click', (function() {
             clearTimeout(timeout);
+            v.gameData.amountOfBox += 1;
             createjs.Sound.play("Jump");
 
             v.restartGame();
@@ -384,7 +384,7 @@ function overlay() {
     el = document.getElementById("overlay");
     el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
     gtag('event', 'overlay', {
-        'visibility': el.style.visibility
+        'value': el.style.visibility
     });
 }
 
