@@ -21,10 +21,10 @@ class NumberedBox extends createjs.Container {
 
         // handle click/tap
         this.on('click', this.handleClick.bind(this));
+        this.on('rollover', this.handleClick.bind(this));
     }
     handleClick() {
         this.game.handleClick(this);
-        createjs.Sound.play("Jump");
     }
 }
 
@@ -46,9 +46,9 @@ class GameData {
     }
     resetData() {
         var isTouchDevice = 'ontouchstart' in document.documentElement;
-        var scaleScore = 10000;
+        var scaleScore = 4000;
         if (isTouchDevice) {
-            scaleScore = 6000;
+            scaleScore = 5000;
         }
 
         this.currentNumber = 1;
@@ -93,6 +93,7 @@ class Game {
 
         this.canvas = document.getElementById("game-canvas");
         this.stage = new createjs.Stage(this.canvas);
+        this.stage.enableMouseOver(30);
 
         this.stage.width = this.canvas.width;
         this.stage.height = this.canvas.height;
@@ -131,6 +132,11 @@ class Game {
         this.restartGame();
         createjs.Ticker.on("tick", this.tick);
         createjs.Ticker.setPaused(true);
+        this.helpTimer = setTimeout(this.helper, 3000);
+    }
+
+    helper() {
+        alert("Click me");
     }
 
     tick() {
@@ -168,6 +174,7 @@ class Game {
     generateMultipleBoxes(amount = 10) {
         for (var i = amount; i > 0; i--) {
             var movieclip = new NumberedBox(this, i);
+            movieclip.cursor = "pointer";
             this.stage.addChild(movieclip);
 
             // randam position
@@ -176,7 +183,9 @@ class Game {
         }
     }
     handleClick(numberedBox) {
+        clearTimeout(this.helpTimer);
         if (this.gameData.isRightNumber(numberedBox.number)) {
+            createjs.Sound.play("Jump");
             this.stage.removeChild(numberedBox);
             this.gameData.nextNumber();
 
@@ -249,7 +258,7 @@ class Game {
         text.textAlign = "center";
         text.textBaseline = "alphabetic";
         v.stage.addChild(text);
-        var text1 = new createjs.Text((v.gameData.amountOfBox-1) + ((v.gameData.amountOfBox-1) ==1 ? " year": " years") + " old.", "20px Oswald", "#ff7700");
+        var text1 = new createjs.Text((v.gameData.amountOfBox - 1) + ((v.gameData.amountOfBox - 1) == 1 ? " year" : " years") + " old.", "20px Oswald", "#ff7700");
         text1.x = v.stage.width / 2;
         text1.y = 40;
         text1.lineWidth = 200;
@@ -282,7 +291,7 @@ class Game {
         text.textAlign = "center";
         text.textBaseline = "alphabetic";
         v.stage.addChild(text);
-        var text1 = new createjs.Text((v.gameData.amountOfBox-1) + ((v.gameData.amountOfBox-1) ==1 ? " year": " years") + " old.", "20px Oswald", "#ff7700");
+        var text1 = new createjs.Text((v.gameData.amountOfBox - 1) + ((v.gameData.amountOfBox - 1) == 1 ? " year" : " years") + " old.", "20px Oswald", "#ff7700");
         text1.x = v.stage.width / 2;
         text1.y = 40;
         text1.lineWidth = 200;
@@ -338,7 +347,6 @@ var messages = ["That was easy!",
     "Way to go! 👍🏻",
     "Victory ✌️",
     "You are the champion",
-    "You can do it",
     "Bravo!!",
     "Ah Ha a good old number game",
     "Never grow up",
@@ -346,7 +354,7 @@ var messages = ["That was easy!",
     "All the way 💪",
     "You doing great"
 ];
-var lostmessages = ["You lose!",
+var lostmessages = [
     "Opsi!",
     "Faster Faster",
     "Never Give Up",
@@ -355,8 +363,7 @@ var lostmessages = ["You lose!",
     "You can do it",
     "Click all if you can",
     "1 2 3 4... easy lah",
-    "You are still playing!",
-    "Dog eat dog",
+    "You are still trying!",
     "Ah Ha looks like you forgot the counting",
     "emm too old for game",
     "last ditch",
