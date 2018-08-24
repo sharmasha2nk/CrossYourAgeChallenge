@@ -136,7 +136,7 @@ class Game {
     }
 
     helper() {
-        alert("Click me");
+        //alert("Click me");
     }
 
     tick() {
