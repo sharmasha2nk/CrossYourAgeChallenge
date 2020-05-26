@@ -381,11 +381,11 @@ function random_bg_color() {
 }
 
 function overlay() {
-    el = document.getElementById("overlay");
-    el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
-    gtag('event', 'overlay', {
-        'value': el.style.visibility
-    });
+//     el = document.getElementById("overlay");
+//     el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+//     gtag('event', 'overlay', {
+//         'value': el.style.visibility
+//     });
 }
 
 random_bg_color();
